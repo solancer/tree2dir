@@ -1,0 +1,61 @@
+{
+  "name": "tree2dir",
+  "version": "1.0.0",
+  "description": "",
+  "author": "Srinivas Gowda <srinivas@solancer.com>",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/lib.cjs",
+  "module": "dist/lib.js",
+  "types": "dist/lib.d.ts",
+  "bin": {
+    "tree2dir": "./dist/cli.cjs"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/lib.cjs",
+      "import": "./dist/lib.js"
+    },
+    "./cli": {
+      "require": "./dist/cli.cjs",
+      "import": "./dist/cli.js"
+    }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "tsup",
+    "start": "node dist/index.js",
+    "dev": "tsup --watch",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/solancer/tree2dir.git"
+  },
+  "keywords": [
+    "tree2dir",
+    "tree2dir-cli",
+    "tree2dir-cli-tool",
+    "ascii",
+    "tree",
+    "directory",
+    "file",
+    "structure"
+  ],
+  "bugs": {
+    "url": "https://github.com/solancer/tree2dir/issues"
+  },
+  "homepage": "https://github.com/solancer/tree2dir#readme",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "commander": "^11.1.0"
+  }
+}

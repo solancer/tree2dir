@@ -1,0 +1,48 @@
+# Node.js and npm
+node_modules/
+npm-debug.log
+yarn-error.log
+.pnp
+.pnp.js
+
+# TypeScript
+*.tsbuildinfo
+
+# Editor directories
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Dependency directories
+.jspm_packages/
+typings/
+
+# Distribution directories
+dist/
+out/
+target/
+lib/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Debugging logs
+logs/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Compiled Output
+*.js
+*.map
+
+# Others
+*.log
+*.swp
