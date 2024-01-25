@@ -38,23 +38,18 @@ export function parseAsciiTree(asciiTree: string): [TreeNode[], string | null] {
             return;
         }
 
-        // Ignore lines that are not relevant
-        if (!line.includes('├──') && !line.includes('└──') && !line.endsWith('/')) {
-            return;
-        }
-
-        // Skip lines that end with '..' LLM's generate with such names
         if (line.trim().endsWith('..')) {
             return;
         }
 
         const level = line.search(/├──|└──/) / 4;
 
-        // Logic to check if the current line is a directory
-        const isNextLineIndented = index + 1 < lines.length && lines[index + 1].indexOf('│   ') === (level + 1) * 4;
-        const isDirectory = isNextLineIndented || line.trim().endsWith('/');
+        // Determine if the current line represents a directory
+        const nextLine = lines[index + 1] || '';
+        const nextLineLevel = nextLine.search(/├──|└──/) / 4;
+        const isDirectory = nextLineLevel > level;
 
-        const name = line.replace(/(├── |└── |│   )/g, '').trim().replace(/\/$/, '');
+        const name = line.replace(/(├── |└── |│   )/g, '').trim();
 
         console.log(`Level: ${level}, Name: ${name}, IsDirectory: ${isDirectory}`);
 

@@ -46,7 +46,7 @@ npm install -g tree2dir
 Or, for a one-time use without installation, you can use `npx`:
 
 ```bash
-tree2dir generate
+npx tree2dir generate
 ```
 
 ## Usage

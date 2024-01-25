@@ -47,6 +47,13 @@ program
                 asciiTree += input + '\n';
             });
 
+            // Handle SIGINT for graceful shutdown
+            rl.on('SIGINT', () => {
+                console.log('Process interrupted by user.');
+                rl.close();
+                process.exit(0);
+            });
+
             rl.on('close', async () => {
                 try {
                     await generate(asciiTree);
