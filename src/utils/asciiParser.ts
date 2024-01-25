@@ -38,8 +38,21 @@ export function parseAsciiTree(asciiTree: string): [TreeNode[], string | null] {
             return;
         }
 
+        // Ignore lines that are not relevant
+        if (!line.includes('├──') && !line.includes('└──') && !line.endsWith('/')) {
+            return;
+        }
+
+        // Skip lines that end with '..' LLM's generate with such names
+        if (line.trim().endsWith('..')) {
+            return;
+        }
+
         const level = line.search(/├──|└──/) / 4;
-        const isDirectory = line.includes('/') || (!line.includes('.') && (lines[index + 1] && lines[index + 1].indexOf('│   ') > -1));
+
+        // Logic to check if the current line is a directory
+        const isNextLineIndented = index + 1 < lines.length && lines[index + 1].indexOf('│   ') === (level + 1) * 4;
+        const isDirectory = isNextLineIndented || line.trim().endsWith('/');
 
         const name = line.replace(/(├── |└── |│   )/g, '').trim().replace(/\/$/, '');
 
