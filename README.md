@@ -22,14 +22,27 @@
     <a href="https://github.com/solancer/tree2dir/actions/workflows/ci.yml">
         <img src="https://github.com/solancer/tree2dir/actions/workflows/ci.yml/badge.svg" alt="CI">
     </a>
+    <br>
     <a href="https://www.npmjs.com/package/tree2dir">
         <img src="https://img.shields.io/npm/v/tree2dir" alt="npm version">
     </a>
     <a href="https://www.npmjs.com/package/tree2dir">
         <img src="https://img.shields.io/npm/dt/tree2dir" alt="npm downloads">
     </a>
+    <a href="https://www.npmjs.com/package/tree2dir">
+        <img src="https://img.shields.io/npm/dw/tree2dir" alt="npm weekly downloads">
+    </a>
+    <a href="https://www.npmjs.com/package/tree2dir">
+        <img src="https://img.shields.io/npm/types/tree2dir" alt="npm type definitions">
+    </a>
+    <a href="https://www.npmjs.com/package/tree2dir">
+        <img src="https://img.shields.io/npm/l/tree2dir" alt="npm license">
+    </a>
 	<br>
 	<br>
+	<div>
+		<img src="Stuff/tree2dir-demo.gif" width="600" alt="tree2dir CLI demo">
+	</div>
 	<br>
 </div>
 
@@ -49,17 +62,30 @@
 - **Validation:** Automatic validation of tree structure with helpful error messages.
 - **Special Character Support:** Handles filenames with spaces, dashes, and underscores.
 
+## Quick Start with npx
+
+The fastest way to use `tree2dir` without installation:
+
+```bash
+npx tree2dir generate
+```
+
+Follow the interactive prompts to paste your ASCII tree structure and generate the directories and files.
+
 ## Installation
-`tree2dir` can be installed globally via npm:
+
+### Global Installation
+Install `tree2dir` globally to use it from anywhere:
 
 ```bash
 npm install -g tree2dir
 ```
 
-Or, for a one-time use without installation, you can use `npx`:
+### Local Installation
+For project-specific use:
 
 ```bash
-npx tree2dir generate
+npm install tree2dir --save-dev
 ```
 
 ## Usage
@@ -118,6 +144,11 @@ tree2dir generate -f mytree.txt --dry-run
 3. Generate from a GitHub gist with dry run:
 ```bash
 tree2dir generate -g <gist-url> --dry-run
+```
+
+4. Quick one-time use with npx:
+```bash
+npx tree2dir generate -f mytree.txt -o ./my-project
 ```
 
 ## From a File
@@ -198,9 +229,10 @@ The tool supports various special characters in filenames:
 
 ## Scenarios Of Use
 
- - Rapid Prototyping: Quickly create boilerplate structures for new projects.
- - Educational Tools: Teach file system structures in a visual and interactive way.
- - Project Templates: Easily replicate complex project structures for consistency across multiple projects.
+- Rapid Prototyping: Quickly create boilerplate structures for new projects.
+- Educational Tools: Teach file system structures in a visual and interactive way.
+- Project Templates: Easily replicate complex project structures for consistency across multiple projects.
+- AI-assisted Project Setup: Generate project structures using AI tools like ChatGPT or Claude.
 
 
 ## Using `tree2dir` as a Library in Node.js Applications
@@ -258,30 +290,31 @@ The library exports the following functions:
 - `basePath`: The base directory where the structure will be created
 - `options`: Optional configuration
 
+## Why Use tree2dir?
+
+- **Save Time**: Quickly scaffold project structures without manually creating each file and folder.
+- **Consistency**: Ensure consistent project structures across teams or multiple projects.
+- **Visualization**: The ASCII tree format makes it easy to visualize and understand directory structures.
+- **Integration**: Works well with other tools and workflows, including AI assistants and code generators.
 
 ## Contributing
 
 Contributions are welcome! Here's how you can contribute to the project:
 
 1. **Fork the repository**: Create your own fork of the project.
-
-2. **Create a branch**: Create a branch for your feature or fix.
+2. **Create a branch**: Create a branch for your feature or fix.  
    ```bash
    git checkout -b feature/your-feature-name
    ```
-
 3. **Make your changes**: Implement your changes, following the code style of the project.
-
-4. **Run the tests**: Make sure all tests pass with your changes.
+4. **Run the tests**: Make sure all tests pass with your changes.  
    ```bash
    npm test
    ```
-
-5. **Run linting**: Ensure your code meets our linting standards.
+5. **Run linting**: Ensure your code meets our linting standards.  
    ```bash
    npm run lint
    ```
-
 6. **Submit a pull request**: Push your changes to your fork and submit a pull request to the main repository.
 
 See the [CHANGELOG.md](CHANGELOG.md) file for details on the latest changes.
@@ -292,11 +325,16 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- Special thanks to all contributors who have helped make this project better.
-- ASCII tree parsing was inspired by various text-based tree visualization techniques.
+* Special thanks to all contributors who have helped make this project better.
+* ASCII tree parsing was inspired by various text-based tree visualization techniques.
 
 ---
 
 <div align="center">
-  <sub>Made with ❤️ by <a href="https://github.com/solancer">Srinivas Gowda</a></sub>
+  <p>Made with ❤️ by <a href="https://github.com/solancer">Srinivas Gowda</a></p>
+  <p>
+    <a href="https://www.npmjs.com/package/tree2dir">
+      <img src="https://nodei.co/npm/tree2dir.png?downloads=true&downloadRank=true&stars=true" alt="NPM">
+    </a>
+  </p>
 </div>
