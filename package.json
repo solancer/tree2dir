@@ -28,8 +28,8 @@
     "build": "tsup",
     "start": "node dist/index.js",
     "dev": "tsup --watch",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
+    "test": "jest --config jest.config.cjs",
+    "test:coverage": "jest --config jest.config.cjs --coverage",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "prepare": "npm run build"
