@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*", "tests/**/*"],
+  "exclude": ["node_modules"]
+} 
