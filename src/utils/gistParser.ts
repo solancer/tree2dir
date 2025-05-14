@@ -97,18 +97,12 @@ export async function fetchGistContent(gistUrlOrId: string): Promise<string> {
             options,
             (response) => {
                 let data = '';
-                let error: Error | null = null;
 
                 response.on('data', (chunk: Buffer) => {
                     data += chunk.toString();
                 });
 
                 response.on('end', () => {
-                    if (error) {
-                        reject(error);
-                        return;
-                    }
-
                     try {
                         if (response.statusCode === 404) {
                             reject(new Error('Gist not found'));

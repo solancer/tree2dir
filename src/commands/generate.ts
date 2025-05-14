@@ -244,18 +244,35 @@ export async function generate(
  * Print tree structure for dry run
  */
 function printTree(nodes: TreeNode[], baseFolder: string | null, outputDir: string): void {
-    function printNode(node: TreeNode, level: number = 0): void {
-        const indent = '    '.repeat(level);
-        const prefix = level === 0 ? '' : (level === 1 ? '└── ' : '    └── ');
-        console.log(`${indent}${prefix}${node.name}${node.type === 'directory' ? '/' : ''}`);
-        if (node.children) {
-            node.children.forEach(child => printNode(child, level + 1));
+    function printNode(node: TreeNode, prefix: string = '', isLast: boolean = true): void {
+        // Print current node
+        console.log(`${prefix}${isLast ? '└── ' : '├── '}${node.name}${node.type === 'directory' ? '/' : ''}`);
+        
+        // Prepare prefix for children
+        const childPrefix = prefix + (isLast ? '    ' : '│   ');
+        
+        // Print children
+        if (node.children && node.children.length > 0) {
+            const lastIndex = node.children.length - 1;
+            node.children.forEach((child, index) => {
+                printNode(child, childPrefix, index === lastIndex);
+            });
         }
     }
 
     if (baseFolder) {
         console.log(`${baseFolder}/`);
+        // Process all nodes with proper isLast parameter
+        const lastIndex = nodes.length - 1;
+        nodes.forEach((node, index) => {
+            printNode(node, '', index === lastIndex);
+        });
+    } else {
+        // If no base folder, print all nodes as top-level
+        const lastIndex = nodes.length - 1;
+        nodes.forEach((node, index) => {
+            printNode(node, '', index === lastIndex);
+        });
     }
-    nodes.forEach(node => printNode(node));
 }
 

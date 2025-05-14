@@ -107,11 +107,7 @@ async function main() {
             });
         } else if (options.gist) {
             try {
-                const response = await fetch(options.gist);
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch gist: ${response.statusText}`);
-                }
-                const content = await response.text();
+                const content = await fetchGistContent(options.gist);
                 await generate(content, options.output || '.', { 
                     dryRun: options.dryRun,
                     debug: options.debug,
