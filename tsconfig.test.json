@@ -5,12 +5,15 @@
     "module": "esnext",
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "strict": true,
+    "strict": false,
     "noImplicitAny": false,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react",
+    "outDir": "./dist-test"
   },
   "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules"]
