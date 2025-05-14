@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2024-08-14
+
 ### Added
 - End-to-end tests for file system operations
 - Test mode flag for better error handling in tests
