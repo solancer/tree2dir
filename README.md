@@ -19,6 +19,15 @@
     <a href="https://github.com/solancer/tree2dir/stargazers">
         <img src="https://img.shields.io/github/stars/solancer/tree2dir" alt="GitHub stars">
     </a>
+    <a href="https://github.com/solancer/tree2dir/actions/workflows/ci.yml">
+        <img src="https://github.com/solancer/tree2dir/actions/workflows/ci.yml/badge.svg" alt="CI">
+    </a>
+    <a href="https://www.npmjs.com/package/tree2dir">
+        <img src="https://img.shields.io/npm/v/tree2dir" alt="npm version">
+    </a>
+    <a href="https://www.npmjs.com/package/tree2dir">
+        <img src="https://img.shields.io/npm/dt/tree2dir" alt="npm downloads">
+    </a>
 	<br>
 	<br>
 	<br>
@@ -35,6 +44,10 @@
 - **File Input:** Support for reading ASCII trees from `.txt` files.
 - **GitHub Gist Support:** Fetch and generate structures directly from GitHub gists.
 - **Interactive Mode:** Paste your ASCII tree directly into the command line.
+- **Output Directory:** Specify a custom output directory for generated structures.
+- **Dry Run Mode:** Preview the structure without creating any files.
+- **Validation:** Automatic validation of tree structure with helpful error messages.
+- **Special Character Support:** Handles filenames with spaces, dashes, and underscores.
 
 ## Installation
 `tree2dir` can be installed globally via npm:
@@ -50,15 +63,62 @@ npx tree2dir generate
 ```
 
 ## Usage
-## General Command
+### General Command
 
 To start `tree2dir` in interactive mode, simply run:
 
 ```bash
 tree2dir generate
 ```
-Then paste your ASCII tree and press Ctrl+D when finished.
 
+### Options
+
+- **`-f, --file <path>`**: Path to an ASCII tree file.
+  ```bash
+  tree2dir generate -f mytree.txt
+  ```
+
+- **`-g, --gist <gistUrl>`**: URL of a GitHub gist containing the ASCII tree.
+  ```bash
+  tree2dir generate -g https://gist.github.com/username/gistid
+  ```
+
+- **`-o, --output <dir>`**: Specify the output directory (default: current directory).
+  ```bash
+  tree2dir generate -f mytree.txt -o ./outdir
+  ```
+
+- **`--dry-run`**: Visualize the structure without creating files.
+  ```bash
+  tree2dir generate -f mytree.txt --dry-run
+  ```
+
+- **`-v, --version`**: Display the current version of tree2dir.
+  ```bash
+  tree2dir --version
+  ```
+
+- **`-h, --help`**: Show help and usage information.
+  ```bash
+  tree2dir --help
+  ```
+
+### Examples
+
+1. Generate a structure from a file in a custom output directory:
+```bash
+tree2dir generate -f mytree.txt -o ./my-project
+```
+
+2. Preview a structure without creating files:
+```bash
+tree2dir generate -f mytree.txt --dry-run
+```
+
+3. Generate from a GitHub gist with dry run:
+```bash
+tree2dir generate -g <gist-url> --dry-run
+```
 
 ## From a File
 To generate a structure from a file:
@@ -116,6 +176,23 @@ myProject/
 └── package.json
 ```
 
+### Validation Rules
+
+The tool performs several validations on the ASCII tree:
+
+1. **Duplicate Paths**: Detects and prevents duplicate file/directory paths.
+2. **Invalid Characters**: Checks for invalid characters in filenames (e.g., `:`).
+3. **Empty Directories**: Warns about empty directories in the structure.
+4. **Path Validation**: Ensures all paths are valid for the target operating system.
+
+### Special Character Support
+
+The tool supports various special characters in filenames:
+
+- Spaces: `file with spaces.js`
+- Dashes: `file-with-dashes.js`
+- Underscores: `file_with_underscores.js`
+
 ## Large Language Models (LLM) Integration
 `tree2dir` can be especially useful when combined with LLMs for generating directory structures. LLMs can be prompted to create an ASCII representation of a project structure, which tree2dir can then turn into an actual directory setup.
 
@@ -143,11 +220,12 @@ Or, if you are using Yarn:
 ```bash
 yarn add tree2dir
 ```
-## Usage
+
+### Usage
 Here's how to use tree2dir to generate directory structures within your application:
 
 ```js
-const tree2dir = require('tree2dir');
+const { generate } = require('tree2dir');
 
 // Define your ASCII tree as a string
 const asciiTree = `
@@ -161,157 +239,64 @@ myProject/
 `;
 
 // Use the `generate` function to create the structure
-tree2dir.generate(asciiTree)
+generate(asciiTree, './output', { dryRun: false })
   .then(() => {
     console.log('Directory structure has been successfully created!');
   })
   .catch(error => {
     console.error('An error occurred:', error);
   });
-
 ```
 
-## Async/Await
-If you're using modern JavaScript with async/await, the usage becomes even cleaner:
-```js
-const tree2dir = require('tree2dir');
+### API Reference
 
-async function createProjectStructure() {
-  try {
-    const asciiTree = `
-    myProject/
-    ├── README.md
-    ├── src/
-    │   ├── main.js
-    │   └── utils/
-    │       └── helpers.js
-    └── package.json
-    `;
+The library exports the following functions:
 
-    // Generate the directory structure
-    await tree2dir.generate(asciiTree);
-    console.log('Directory structure has been successfully created!');
-  } catch (error) {
-    console.error('An error occurred:', error);
-  }
-}
+#### `generate(asciiTree: string, basePath: string, options?: { dryRun?: boolean }): Promise<void>`
 
-createProjectStructure();
-```
-
-## TypeScript
-If you're using TypeScript, tree2dir provides type definitions out of the box. Here's how you might use it in a TypeScript application:
-
-```ts
-import { generate } from 'tree2dir';
-
-async function createProjectStructure() {
-  const asciiTree: string = `
-  myProject/
-  ├── README.md
-  ├── src/
-  │   ├── main.ts
-  │   └── utils/
-  │       └── helpers.ts
-  └── package.json
-  `;
-
-  try {
-    // Generate the directory structure
-    await generate(asciiTree);
-    console.log('Directory structure has been successfully created!');
-  } catch (error) {
-    console.error('An error occurred:', error);
-  }
-}
-
-createProjectStructure();
-```
-
-## Advanced Usage: Accepting ASCII Trees from Streams
-
-In addition to passing a static ASCII tree string to `tree2dir`, you can also process ASCII trees from streams. This is particularly useful when you're dealing with large directories or when you want to generate structures on-the-fly from an external source.
-
-Here's an example of how you might accept an ASCII tree from a readable stream:
-
-```javascript
-const tree2dir = require('tree2dir');
-const { Readable } = require('stream');
-
-function streamToTree2dir(stream) {
-  let asciiTree = '';
-  
-  stream.on('data', chunk => {
-    asciiTree += chunk;
-  });
-
-  stream.on('end', async () => {
-    try {
-      await tree2dir.generate(asciiTree);
-      console.log('Directory structure has been successfully created!');
-    } catch (error) {
-      console.error('An error occurred while generating structure:', error);
-    }
-  });
-}
-
-// Example usage with a Readable stream
-const treeStream = Readable.from(`
-myProject/
-├── README.md
-├── src/
-│   ├── main.js
-│   └── utils/
-│       └── helpers.js
-└── package.json
-`);
-
-streamToTree2dir(treeStream);
-```
-
-## Using with TypeScript
-If you're using TypeScript, the example would look similar, with the addition of types for better code reliability and developer experience:
-
-```ts
-import { generate } from 'tree2dir';
-import { Readable } from 'stream';
-
-function streamToTree2dir(stream: Readable) {
-  let asciiTree: string = '';
-  
-  stream.on('data', (chunk: Buffer) => {
-    asciiTree += chunk.toString();
-  });
-
-  stream.on('end', async () => {
-    try {
-      await generate(asciiTree);
-      console.log('Directory structure has been successfully created!');
-    } catch (error) {
-      console.error('An error occurred while generating structure:', error);
-    }
-  });
-}
-
-// Example usage with a Readable stream
-const treeStream: Readable = Readable.from(`
-myProject/
-├── README.md
-├── src/
-│   ├── main.ts
-│   └── utils/
-│       └── helpers.ts
-└── package.json
-`);
-
-streamToTree2dir(treeStream);
-```
-
-By incorporating tree2dir into your Node.js applications, you gain the flexibility to programmatically create file structures, which can be particularly useful for scaffolding projects, generating reports, or organizing output data.
+- `asciiTree`: The ASCII tree structure as a string
+- `basePath`: The base directory where the structure will be created
+- `options`: Optional configuration
 
 
 ## Contributing
-Contributions to tree2dir are welcome. Please fork the repository, make your changes, and submit a pull request.
+
+Contributions are welcome! Here's how you can contribute to the project:
+
+1. **Fork the repository**: Create your own fork of the project.
+
+2. **Create a branch**: Create a branch for your feature or fix.
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+3. **Make your changes**: Implement your changes, following the code style of the project.
+
+4. **Run the tests**: Make sure all tests pass with your changes.
+   ```bash
+   npm test
+   ```
+
+5. **Run linting**: Ensure your code meets our linting standards.
+   ```bash
+   npm run lint
+   ```
+
+6. **Submit a pull request**: Push your changes to your fork and submit a pull request to the main repository.
+
+See the [CHANGELOG.md](CHANGELOG.md) file for details on the latest changes.
 
 ## License
-tree2dir is open-source software licensed under the MIT License.
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- Special thanks to all contributors who have helped make this project better.
+- ASCII tree parsing was inspired by various text-based tree visualization techniques.
+
+---
+
+<div align="center">
+  <sub>Made with ❤️ by <a href="https://github.com/solancer">Srinivas Gowda</a></sub>
+</div>
