@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2024-11-07
+
+### Changed
+- Updated dependencies to latest compatible versions
+- Improved error handling for edge cases
+
+### Added
+- Added automatic dependabot configuration for dependency updates
+
 ## [1.2.0] - 2024-08-14
 
 ### Added
