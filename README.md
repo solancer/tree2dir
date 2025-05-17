@@ -338,3 +338,33 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
     </a>
   </p>
 </div>
+
+
+
+
+
+
+
+```
+otelcol.receiver.filelog "bridge_pm2" {
+  include       = ["/home/ubuntu/logs/pcs-combined.log"]
+  start_at      = "end"
+  poll_interval = "250ms"
+  output.logs   = [loki.process.bridge.receiver]
+}
+
+loki.process "bridge" {
+  forward_to = [loki.write.gc.receiver]
+
+loki.write "gc" {
+  endpoint {
+    url       = env("GCLOUD_HOSTED_LOGS_URL")
+    tenant_id = env("GCLOUD_HOSTED_LOGS_ID")
+    basic_auth {
+      username = env("GCLOUD_HOSTED_LOGS_ID")
+      password = env("GCLOUD_RW_API_KEY")
+    }
+  }
+}
+```
+
