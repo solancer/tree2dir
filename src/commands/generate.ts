@@ -36,6 +36,7 @@ interface GenerateOptions {
     debug?: boolean;
     interactive?: boolean;
     maxConcurrent?: number;
+    skip?: boolean;
 }
 
 class LoadingIndicator {
@@ -96,11 +97,23 @@ function handleTestError(error: unknown): never {
 /**
  * Safely creates a directory with proper error handling
  */
-async function safeMkdir(dirPath: string, debug: boolean = false): Promise<void> {
+async function safeMkdir(dirPath: string, options: { debug: boolean; skip: boolean } = { debug: false, skip: false }): Promise<void> {
     try {
+        // Check if directory exists and skip if requested
+        if (options.skip) {
+            try {
+                await fsPromises.access(dirPath);
+                if (options.debug) {
+                    console.log(`Skipping existing directory: ${dirPath}`);
+                }
+                return;
+            } catch {
+                // Directory doesn't exist, proceed with creation
+            }
+        }
         await fsPromises.mkdir(dirPath, { recursive: true, mode: 0o755 });
     } catch (error) {
-        if (debug) {
+        if (options.debug) {
             console.error(`Error creating directory ${dirPath}:`, error);
         }
         // Preserve original error without modification
@@ -111,13 +124,26 @@ async function safeMkdir(dirPath: string, debug: boolean = false): Promise<void>
 /**
  * Safely creates a file with proper error handling
  */
-async function safeWriteFile(filePath: string, content: string = '', debug: boolean = false): Promise<void> {
+async function safeWriteFile(filePath: string, content: string = '', options: { debug: boolean; skip: boolean } = { debug: false, skip: false }): Promise<void> {
     try {
         const dirPath = path.dirname(filePath);
-        await fsPromises.mkdir(dirPath, { recursive: true, mode: 0o755 });
+        await safeMkdir(dirPath, options);
+
+        // Check if file exists and skip if requested
+        if (options.skip) {
+            try {
+                await fsPromises.access(filePath);
+                if (options.debug) {
+                    console.log(`Skipping existing file: ${filePath}`);
+                }
+                return;
+            } catch {
+                // File doesn't exist, proceed with creation
+            }
+        }
         await fsPromises.writeFile(filePath, content, { mode: 0o644 });
     } catch (error) {
-        if (debug) {
+        if (options.debug) {
             console.error(`Error creating file ${filePath}:`, error);
         }
         // Preserve original error without modification
@@ -131,9 +157,9 @@ async function safeWriteFile(filePath: string, content: string = '', debug: bool
 async function processNodes(
     nodes: TreeNode[],
     basePath: string,
-    options: { debug: boolean; maxConcurrent: number }
+    options: { debug: boolean; maxConcurrent: number; skip: boolean }
 ): Promise<void> {
-    const { debug, maxConcurrent } = options;
+    const { debug, maxConcurrent, skip } = options;
     const queue = [...nodes];
     const processing = new Set<Promise<void>>();
 
@@ -148,7 +174,7 @@ async function processNodes(
                 }
 
                 if (node.type === 'directory') {
-                    await safeMkdir(nodePath, debug);
+                    await safeMkdir(nodePath, { debug, skip });
                     if (node.children) {
                         await processNodes(node.children, nodePath, options);
                     }
@@ -156,7 +182,7 @@ async function processNodes(
                     if (debug) {
                         console.log(`Creating file at: ${nodePath}`);
                     }
-                    await safeWriteFile(nodePath, '', debug);
+                    await safeWriteFile(nodePath, '', { debug, skip });
                 }
             })();
             processing.add(promise);
@@ -186,7 +212,8 @@ export async function generate(
         dryRun = false,
         debug = false,
         interactive = false,
-        maxConcurrent = os.cpus().length
+        maxConcurrent = os.cpus().length,
+        skip = false
     } = options;
 
     const loader = interactive ? new LoadingIndicator('Generating directory structure...') : null;
@@ -227,10 +254,10 @@ export async function generate(
         }
 
         // Create the base directory
-        await safeMkdir(basePath, debug);
+        await safeMkdir(basePath, { debug, skip });
 
         // Process nodes with concurrency control
-        await processNodes(nodes, basePath, { debug, maxConcurrent });
+        await processNodes(nodes, basePath, { debug, maxConcurrent, skip });
 
         if (loader) loader.stop(true);
     } catch (error) {
