@@ -53,7 +53,7 @@
   },
   "homepage": "https://github.com/solancer/tree2dir#readme",
   "devDependencies": {
-    "@babel/core": "^7.23.9",
+    "@babel/core": "^7.27.4",
     "@babel/preset-env": "^7.23.9",
     "@babel/preset-typescript": "^7.23.3",
     "@types/jest": "^29.5.12",
