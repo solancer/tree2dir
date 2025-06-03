@@ -93,7 +93,7 @@ project/
             const [nodes, basePath] = parseAsciiTree(asciiTree);
             const validation = validateTree(nodes, basePath);
             expect(validation.isValid).toBe(false);
-            expect(validation.errors).toContain('Duplicate path found: project/src/index.js');
+            expect(validation.errors).toContain(`Duplicate path found: ${path.join('project', 'src', 'index.js')}`);
         });
 
         test('should detect invalid characters in names', () => {
@@ -107,7 +107,7 @@ project/
             const [nodes, basePath] = parseAsciiTree(asciiTree);
             const validation = validateTree(nodes, basePath);
             expect(validation.isValid).toBe(false);
-            expect(validation.errors).toContain('Invalid characters in name: project/src/file:name.js');
+            expect(validation.errors).toContain(`Invalid characters in name: ${path.join('project', 'src', 'file:name.js')}`);
         });
 
         test('should warn about empty directories', () => {
@@ -120,7 +120,7 @@ project/
             const [nodes, basePath] = parseAsciiTree(asciiTree);
             const validation = validateTree(nodes, basePath);
             expect(validation.isValid).toBe(true);
-            expect(validation.warnings).toContain('Empty directory: project/src/empty');
+            expect(validation.warnings).toContain(`Empty directory: ${path.join('project', 'src', 'empty')}`);
         });
 
         test('should validate paths with special characters in directory names', () => {
@@ -287,37 +287,61 @@ dry-run-project/
         });
 
         test('should handle file system permission errors', async () => {
+            // Enable test mode to ensure errors are properly caught
+            enableTestMode();
+            
             const asciiTree = `
 project/
 └── file.js
 `;
             const readOnlyDir = path.join(testOutputDir, 'readonly');
             fs.mkdirSync(readOnlyDir, { recursive: true });
-            fs.chmodSync(readOnlyDir, 0o444); // Read-only permissions
+            
+            // Create a file in the directory to make it non-empty
+            fs.writeFileSync(path.join(readOnlyDir, 'existing.txt'), 'test');
+            
+            // Mock fs.promises.mkdir to simulate permission error
+            const mkdirSpy = jest.spyOn(fs.promises, 'mkdir')
+                .mockImplementation(() => Promise.reject(new Error('EACCES: permission denied')));
 
-            await expect(generate(asciiTree, readOnlyDir))
-                .rejects
-                .toThrow();
-
-            fs.chmodSync(readOnlyDir, 0o777); // Restore permissions
+            try {
+                await expect(generate(asciiTree, readOnlyDir))
+                    .rejects
+                    .toThrow(/EACCES/);
+            } finally {
+                // Clean up
+                mkdirSpy.mockRestore();
+                if (fs.existsSync(readOnlyDir)) {
+                    fs.rmSync(readOnlyDir, { recursive: true, force: true });
+                }
+            }
         });
 
         test('should handle invalid output directory', async () => {
+            // Enable test mode to ensure errors are properly caught
+            enableTestMode();
+            
             const asciiTree = `
 project/
 └── file.js
 `;
             const invalidPath = path.join(testOutputDir, 'nonexistent', 'subdir');
-            // Create parent directory but make it read-only
-            fs.mkdirSync(path.dirname(invalidPath), { recursive: true });
-            fs.chmodSync(path.dirname(invalidPath), 0o444);
+            
+            // Mock fs.promises.mkdir to simulate permission error
+            const mkdirSpy = jest.spyOn(fs.promises, 'mkdir')
+                .mockImplementation(() => Promise.reject(new Error('EACCES: permission denied')));
 
-            await expect(generate(asciiTree, invalidPath))
-                .rejects
-                .toThrow();
-
-            // Restore permissions
-            fs.chmodSync(path.dirname(invalidPath), 0o777);
+            try {
+                await expect(generate(asciiTree, invalidPath))
+                    .rejects
+                    .toThrow(/EACCES/);
+            } finally {
+                // Clean up
+                mkdirSpy.mockRestore();
+                if (fs.existsSync(path.dirname(invalidPath))) {
+                    fs.rmSync(path.dirname(invalidPath), { recursive: true, force: true });
+                }
+            }
         });
 
         test('should handle paths with special characters in directory names', async () => {
