@@ -54,7 +54,7 @@
   "homepage": "https://github.com/solancer/tree2dir#readme",
   "devDependencies": {
     "@babel/core": "^7.23.9",
-    "@babel/preset-env": "^7.23.9",
+    "@babel/preset-env": "^7.28.3",
     "@babel/preset-typescript": "^7.23.3",
     "@types/jest": "^29.5.12",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
