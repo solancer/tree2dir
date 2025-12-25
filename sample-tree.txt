@@ -1,0 +1,9 @@
+test-project/
+├── README.md
+├── package.json
+├── src/
+│   ├── index.js
+│   └── utils/
+│       └── helpers.js
+└── docs/
+    └── api.md
