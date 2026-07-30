@@ -549,6 +549,44 @@ project/
             consoleSpy.mockRestore();
             writeFileSpy.mockRestore();
         });
+
+        test('should skip existing files and directories when skip option is enabled', async () => {
+            const asciiTree = `
+project/
+├── existing-dir/
+│   └── existing-file.js
+├── new-dir/
+│   └── new-file.js
+└── existing-file.js
+`;
+
+            // Create some existing files and directories
+            const existingDir = path.join(testOutputDir, 'project', 'existing-dir');
+            const existingFile = path.join(testOutputDir, 'project', 'existing-file.js');
+            const existingFileInDir = path.join(existingDir, 'existing-file.js');
+
+            fs.mkdirSync(existingDir, { recursive: true });
+            fs.writeFileSync(existingFile, 'existing content');
+            fs.writeFileSync(existingFileInDir, 'existing content in dir');
+
+            // Generate the structure with skip option
+            const consoleSpy = jest.spyOn(console, 'log');
+            await generate(asciiTree, testOutputDir, { skip: true, debug: true });
+
+            // Verify existing files were not modified
+            expect(fs.readFileSync(existingFile, 'utf8')).toBe('existing content');
+            expect(fs.readFileSync(existingFileInDir, 'utf8')).toBe('existing content in dir');
+
+            // Verify new files were created
+            expect(fs.existsSync(path.join(testOutputDir, 'project', 'new-dir'))).toBe(true);
+            expect(fs.existsSync(path.join(testOutputDir, 'project', 'new-dir', 'new-file.js'))).toBe(true);
+
+            // Verify debug logs show skipping
+            expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Skipping existing file:'));
+            expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Skipping existing directory:'));
+
+            consoleSpy.mockRestore();
+        });
     });
 
     describe('CLI Features', () => {

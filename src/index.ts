@@ -42,6 +42,7 @@ interface CliOptions {
     dryRun?: boolean;
     debug?: boolean;
     help?: boolean;
+    skip?: boolean;
 }
 
 function parseArgs(): CliOptions {
@@ -66,6 +67,8 @@ function parseArgs(): CliOptions {
                 options.debug = true;
             } else if (option === 'help') {
                 options.help = true;
+            } else if (option === 'skip') {
+                options.skip = true;
             } else if (i + 1 < args.length) {
                 const value = args[i + 1];
                 switch (option) {
@@ -85,6 +88,8 @@ function parseArgs(): CliOptions {
             const option = arg.slice(1);
             if (option === 'h') {
                 options.help = true;
+            } else if (option === 's') {
+                options.skip = true;
             } else if (i + 1 < args.length) {
                 const value = args[i + 1];
                 switch (option) {
@@ -120,11 +125,13 @@ function displayHelp(): void {
     console.log(`  ${colors.green}-o, --output${colors.reset} <dir>     📁 Specify the output directory (default: current directory)`);
     console.log(`  ${colors.green}--dry-run${colors.reset}              🔍 Visualize the structure without creating files`);
     console.log(`  ${colors.green}--debug${colors.reset}                🐞 Show debug information during execution`);
+    console.log(`  ${colors.green}-s, --skip${colors.reset}             ⏭️  Skip existing files and directories`);
     console.log(`  ${colors.green}-h, --help${colors.reset}             ℹ️  Show this help message`);
     
     console.log(`\n${colors.bright}${colors.cyan}Examples:${colors.reset}`);
     console.log(`  ${colors.yellow}tree2dir generate -f mytree.txt -o ./my-project${colors.reset}`);
     console.log(`  ${colors.yellow}tree2dir generate -g https://gist.github.com/username/gistid --dry-run${colors.reset}`);
+    console.log(`  ${colors.yellow}tree2dir generate -f mytree.txt -s${colors.reset}`);
     console.log(`  ${colors.yellow}tree2dir generate${colors.reset}      (interactive mode)`);
     
     console.log(`\n${colors.dim}For more information, visit: https://github.com/solancer/tree2dir${colors.reset}\n`);
